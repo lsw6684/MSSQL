@@ -8,14 +8,14 @@ SSMS에서 CRUD 시 ROLLBACK이 불가능 하기 때문에, **BEGIN TRAN**을 �
 ```sql
 BEGIN TRAN
 
-UPDATE	a 
-SET		a.step_3_name = b.step_3_name
-FROM	acccost a 
+UPDATE  a 
+SET	a.step_3_name = b.step_3_name
+FROM    acccost a 
 JOIN	acccost_2 b
 on   	a.dstyleno = b.dstyleno     -- KEY 총 4개.
-AND		a.step_1 = b.step_1
-AND		a.step_2 = b.step_2
-AND		a.step_3 = b.step_3
+AND	a.step_1 = b.step_1
+AND	a.step_2 = b.step_2
+AND	a.step_3 = b.step_3
 ;
 
 ROLLBACK
