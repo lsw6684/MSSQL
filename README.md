@@ -75,6 +75,39 @@ COMMIT
     - Analysis Service / Reporting Service
 
 ### RAID
+Redundant Array of Inexpensive Disks, 여러 개의 디스크를 배열하여 속도/안정성/효율성/가용성을 향상시키는 기술입니다.
+- RAID 0 <br />
+Concatenate, Stripe로 총 두 가지 방법이 있습니다. **중복 블록이 존재하지 않아서** 사용 가능 용량은 모든 디스크를 합친 용량입니다. 디스크 일부에 장애가 발생하면, 복구가 어렵고 패리티를 지원하지 않는다는 단점이 있습니다. 
+    - Concatenate <br />
+    두 개 이상의 디스크를 **순차적으로 사용**합니다. 디스크 공간이 부족해도 데이터를 보존하며 용량 증설이 가능합니다.
+        <p align="center"><img src="images/raid01.png" width="20%"></p>
+
+    - Stripe(**RAID 0는 보통 Stripe**) <br />
+    데이터를 두 개 이상의 디스크에 **분산 저장**합니다. I/O를 디스크 수만큼 분할하기 때문에 I/O속도가 향상되며, 디스크를 늘릴 시 기존 데이터는 모두 삭제 되어야 합니다.
+        <p align="center"><img src="images/raid02.png" width="20%"></p>
+
+- RAID 1(Mirror) <br />
+2개 이상의 디스크로 구성되고 패리티를 사용하지 않으며, 같은 데이터를 중복 기록합니다. 
+    - 장점 : 볼륨 내 디스크 중 하나만 정상이여도 데이터 보존이 가능하기 때문에 **가용성이 높고 상대적으로 복원이 간단**합니다. 
+    - 단점 : **용량이 기본의 절반**으로 줄고, 미러링으로 인해 **입력 속도가 느려**집니다.
+        <p align="center"><img src="images/raid1.png" width="20%"></p>
+
+
+- RAID 2 <br />
+RAID 0의 Stripe에서 에러 체크와 수정을 할 수 있도록 **Hamming code**를 사용합니다. 하드 디스크에서 ECC(Error Correction Code)를 지원하지 않기 때문에 ECC를 별도의 드라이브에 저장합니다. **RAID 4가 나온 이후 거의 사용되지 않습니다.**
+        <p align="center"><img src="images/raid2.png" width="30%"></p>
+- RAID 3 & RAID 4 <br />
+RAID 0, 1의 단점을 보완하기 위해 나온 방식으로, 기본적으로 RAID 0의 Stripe로 구성되며 성능 보완과 디스크 용량을 온전히 사용하는 것을 보장합니다. 추가로 **패리티**정보를 별도 디스크에 저장합니다. RAID 3는 데이터를 **바이트 단위**로 나누어 디스크에 동등하게 분산 기록하며, RAID 4는 **블록 단위**로 나눠 기록합니다. **RAID 3는 드라이브 동기화가 필수적**이라 많이 사용되진 않습니다.
+    - 단점 : 패리티 정보를 한 디스크에 저장하기 때문에 손상 시 데이터 복구가 어려울 수 있습니다.
+        <p align="center"><img src="images/raid3.png" width="30%"></p>
+- RAID 5 <br />
+RAID 3, 4에서 별도의 패리티 정보 디스크를 사용하여 발생하는 문제점을 보완한 방식으로 정보를 Stripe로 구성된 디스크 내에서 처리합니다.
+    - 장점 : 1개의 하드가 고장나도 남은 하드를 통해 데이터를 복구할 수 있으며, 성능/안전성/용량 세 부분을 모두 고려하기 때문에 실제로 많이 사용됩니다.
+    - 단점 : RAID 0보다 성능이 부족합니다.
+        <p align="center"><img src="images/raid5.png" width="30%"></p>
+- RAID 6 <br />
+RAID 5와 같지만, 다른 드라이브들 간에 분포되어 있는 2차 패리티 정보를 넣는다는 점에서 차이가 있습니다. RAID 5에서 데이터 안전성을 더욱 고려한 방식입니다.
+    - 장점 : 2개의 하드에서 문제가 생겨도 복구 가능합니다.
 ---
 ## SSMS
 SQL Server Management Studio
