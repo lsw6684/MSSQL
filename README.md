@@ -5,6 +5,7 @@
     - [RAID](#raid)
 - [SSMS](#ssms)
 - [명령어](#명령어)
+- [특징](#특징)
 ---
 ## 습관
 SSMS에서 CRUD 시 ROLLBACK이 불가능 하기 때문에, **BEGIN TRAN**을 사용하여 하위 쿼리로 인한 데이터 손실, 오입력을 방지합니다. <br />
@@ -131,3 +132,16 @@ SQL Server Management Studio
     SELECT * FROM 테이블2
     GO
     ```
+- IDENTITY_INSERT : INSERT 시, 속성 매칭 오류 등으로 인한 문제를 해결합니다. 한 세션에서 한 테이블만 ON해줄 수 있습니다.
+    ```sql
+     SET    IDENTITY_INSERT 테이블명 ON;
+     INSERT /*
+            */
+     SET IDENTITY_INSERT 테이블명 OFF;
+    ```
+- 열 이름 변경
+---
+
+## 특징
+- NULL과 공백('') <br />
+컬럼에 공백 값을 INSERT 할 경우 **오라클에선** NULL로 저장 되지만, **MSSQL에서는 NULL과 공백이 구분**됩니다. 공백 값은 ISNULL 조건에 걸리지 않으며, default 값이 설정된 컬럼에 INSERT를 할 때, **공백('')이 아닌 NULL을 사용하거나 생략**해야 합니다.
