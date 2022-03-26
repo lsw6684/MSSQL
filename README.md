@@ -3,6 +3,7 @@
 - [습관](#습관)
 - [DBMS](#dbms)
     - [RAID](#raid)
+    - [파일그룹](#파일그룹)
 - [SSMS](#ssms)
 - [명령어](#명령어)
 ---
@@ -108,6 +109,13 @@ RAID 3, 4에서 별도의 패리티 정보 디스크를 사용하여 발생하�
 - RAID 6 <br />
 RAID 5와 같지만, 다른 드라이브들 간에 분포되어 있는 2차 패리티 정보를 넣는다는 점에서 차이가 있습니다. RAID 5에서 데이터 안전성을 더욱 고려한 방식입니다.
     - 장점 : 2개의 하드에서 문제가 생겨도 복구 가능합니다.
+
+### 파일그룹
+- 파일을 관리하기 위한 논리적인 그룹
+    - 데이터 파일(*.mdf, *.ndf)
+- 성능향상을 위해 서로 다른 드라이브에 생성/운영합니다.
+    - RAID 0 같은 효과를 보입니다.
+
 ---
 ## SSMS
 SQL Server Management Studio
@@ -130,4 +138,17 @@ SQL Server Management Studio
     GO
     SELECT * FROM 테이블2
     GO
+    ```
+- SERVERPROPERTY('collation') : 정렬 기본 값 조회
+    ```sql
+    SELECT SERVERPROPERTY('collation')
+    -- Korean_Wansung_CI_AS : 한글 완성형 대소문자 구분 없이
+    -- Korean_Wansung_CS_AS : 한글 완성형 대소문자 구분.
+    ```
+- DECLARE : 변수 선언
+    ```sql
+    DECLARE @num INT;       -- 선언, 필드 명과 구분짓기 위해 '@'를 사용
+    SET     @num = 15000;   -- 초기화
+    SET     @num = @num * 5;
+    SELECT  @num AS '총합';       -- 출력
     ```
