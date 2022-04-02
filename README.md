@@ -6,6 +6,7 @@
     - [파일그룹](#파일그룹)
 - [SSMS](#ssms)
 - [명령어](#명령어)
+- [테이블 변수](#테이블-변수)
 - [특징](#특징)
 ---
 ## 습관
@@ -156,12 +157,90 @@ SQL Server Management Studio
 - DECLARE : 변수 선언
     ```sql
     DECLARE @num INT;       -- 선언, 필드 명과 구분짓기 위해 '@'를 사용
+    DECLARE @메모 CHAR(MAX) -- 최대 크기 선언
     SET     @num = 15000;   -- 초기화
     SET     @num = @num * 5;
     SELECT  @num AS '총합';       -- 출력
     ```
----
+- CHAR 와 VARCHAR의 차이
+    ```sql
+    DECLARE @품목1 VARCHAR(10);
+    -- 10바이트 가변 길이 문자
+    -- 가변 문자는 편하긴 하지만, 메모리 낭비가 존재합니다.
 
+    DECLARE @품목2 NVARCHAR(5); 
+    -- 10바이트 유니코드(한 자당 2바이트) 가변 길이 문자
+    -- 1바이트 짜리 문자도 2바이트로 취급합니다.
+    -- 관리의 편의성을 위합니다.
+    
+    DECLARE @상품코드 CHAR(5);  
+    -- 고정 길이 문자 
+    ```
+- SYSDATETIME() : 시간
+    ```sql
+    SYSDATETIME() : 현재 시간
+    SYSDATETIMEOFFSET() : 표준 시간대
+    ```
+- NEWID() : Unique Identifier
+    ```sql
+    SELECT NEWID();
+
+    CREATE TABLE 고객
+    (
+        고객번호 UNIQUEIDENTIFIER,
+        고객이름 NVARCHAR(20)
+    );
+
+    INSERT INTO 고객
+    VALUES      (NEWID(), '이승원');
+    ```
+- DATEDIFF : 날짜 차 구하기
+    ```sql
+    SELECT DATEDIFF(dd, '2022-01-01', '2022-12-31') + 1
+    -- 365
+
+    CREATE TABLE 휴가
+    (
+        순번        INT,
+        직원코드    CHAR(5),
+        휴가시작일  DATE,
+        휴가종료일  DATE,
+        휴가사유    NVARCHAR(256),
+        휴가기간    AS (DATEDIFF(DAY, 휴가시작일, 휴가종료일) + 1)
+        -- 계산된 열
+        -- 끝에 PERSISTED 추가 하면, 화면에 출력될 때 계산하는 것이 아닌, 계산된 상태로 저장하여 출력 속도가, 보다 빠릅니다.
+    )
+    ```
+---
+## 테이블 변수
+메모리에 일시적으로 생성되는 테이블로, 복잡한 쿼리 작성 시 임시 변수 기능을 합니다.
+```sql
+DECLARE @고객 TABLE
+(
+    고객번호    CHAR(5),
+    고객명      NVARCHAR(20),
+    전화번호    NVARCHAR(20) 
+)
+INSERT INTO @고객 (고객번호, 고객명, 전화번호)
+VALUES		('12345', '이승원', '010-1111-1111')
+			,('12346', '이승투', '010-1111-2222')
+			,('12347', '일승원', '010-1111-3333');
+
+UPDATE @고객
+SET		전화번호 = '101'
+WHERE	고객번호 = '12345';
+
+SELECT * FROM @고객
+/*
+12345	이승원	101
+12346	이승투	010-1111-2222
+12347	일승원	010-1111-3333
+*/
+
+
+```
+
+---
 ## 특징
 - NULL과 공백('') <br />
 컬럼에 공백 값을 INSERT 할 경우 **오라클에선** NULL로 저장 되지만, **MSSQL에서는 NULL과 공백이 구분**됩니다. 공백 값은 ISNULL 조건에 걸리지 않으며, default 값이 설정된 컬럼에 INSERT를 할 때, **공백('')이 아닌 NULL을 사용하거나 생략**해야 합니다.
