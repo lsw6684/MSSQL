@@ -7,6 +7,7 @@
 - [SSMS](#ssms)
 - [명령어](#명령어)
 - [테이블 변수](#테이블-변수)
+- [데이터 무결성](#데이터-무결성)
 - [특징](#특징)
 ---
 ## 습관
@@ -141,13 +142,6 @@ SQL Server Management Studio
     SELECT * FROM 테이블2
     GO
     ```
-- IDENTITY_INSERT : INSERT 시, 속성 매칭 오류 등으로 인한 문제를 해결합니다. 한 세션에서 한 테이블만 ON해줄 수 있습니다.
-    ```sql
-     SET    IDENTITY_INSERT 테이블명 ON;
-     INSERT /*
-            */
-     SET IDENTITY_INSERT 테이블명 OFF;
-    ```
 - SERVERPROPERTY('collation') : 정렬 기본 값 조회
     ```sql
     SELECT SERVERPROPERTY('collation')
@@ -159,6 +153,8 @@ SQL Server Management Studio
     DECLARE @num INT;       -- 선언, 필드 명과 구분짓기 위해 '@'를 사용
     DECLARE @메모 CHAR(MAX) -- 최대 크기 선언
     SET     @num = 15000;   -- 초기화
+    -- 초기화를 하지 않으면 NULL로 되어 있기 때문에, 연산 불가능.
+
     SET     @num = @num * 5;
     SELECT  @num AS '총합';       -- 출력
     ```
@@ -211,9 +207,70 @@ SQL Server Management Studio
         -- 끝에 PERSISTED 추가 하면, 화면에 출력될 때 계산하는 것이 아닌, 계산된 상태로 저장하여 출력 속도가, 보다 빠릅니다.
     )
     ```
+- IDENTITY
+    ```sql
+    CREATE TABLE    휴가 (
+        순번    INT IDENTITY            -- 1씩 증가
+        순번2   INT IDENTITY(100, 2)    -- 100부터 2씩 증가 
+    )
+    ```
+- @@IDENTITY : 현재 세션에 의해 영향 받은 TABLE의 IDENTITY 필드 마지막 값
+    ```sql
+    SELECT @@IDENTITY;
+    ```    
+- DBCC
+    ```sql
+    DBCC CHECKIDENT('테이블명', NORESEED);      -- IDENT 증가 값 확인
+    DBCC CHECKIDENT('테이블명', RESEED, 10000); -- IDENT의 시작 값 10000으로 변경
+    ```
+- SCOPE_IDENTITY() : 현재 테이블의 IDENTITY를 출력합니다.
+    ```sql
+    SELECT SCOPE_IDENTITY();
+    ```
+- IDENT_CURRENT('테이블명') : 해당 테이블의 IDENTITY를 출력합니다.
+    ```sql
+    SELECT IDENT_CURRENT('휴가');
+    ```
+- IDENTITY_INSERT : INSERT 시, 속성 매칭 오류, 혹은 [IDENTITY](#identity)로 인해 수정 불가능한 문제 등을 해결합니다. 한 세션에서 한 테이블만 ON해줄 수 있습니다.
+    ```sql
+     SET    IDENTITY_INSERT 테이블명 ON;
+     INSERT /*
+            */
+     SET IDENTITY_INSERT 테이블명 OFF;
+    ```
+- SYS.KEY_CONSTRAINTS : PK, UQ 등을 포함한 정보를 출력합니다.
+    ```sql
+    SELECT * FROM SYS.KEY_CONSTRAINTS;
+    ```
+- CONSTRAINT : 제약 조건 수정
+    ```sql
+    ALTER TABLE 테이블명            
+    DROP CONSTRAINT PK명;    -- 테이블의 PK삭제.
+    -- SYS.KEY_CONSTRAINTS로 조회된 name이 PK명입니다.
+
+    ALTER TABLE 테이블명
+    ADD PRIMARY KEY (컬럼명); 
+    -- PK 추가. 단, 해당 컬럼에 중복이 존재하지 않아야 합니다. 
+
+    ALTER TABLE 테이블명
+    ADD UNIQUE (컬럼명)
+    ```
+- DEFAULT : 기본 값
+    ```sql
+    CREATE TABLE 고객
+    (
+        고객번호 INT PRIMARY KEY IDENTITY(1, 1),
+        마일리지 INT DEFAULT 500
+    )
+    ```
+- CHECK : 특정 조건 만족 시 입력됩니다. 같은 테이블의 다른 컬럼 참조가 가능합니다.
+    ```sql
+    ALTER TABLE		휴가
+    ADD CHECK		(휴가종료일 >= 휴가시작일);
+    ```
 ---
 ## 테이블 변수
-메모리에 일시적으로 생성되는 테이블로, 복잡한 쿼리 작성 시 임시 변수 기능을 합니다.
+메모리에 일시적+으로 생성되는 테이블로, 복잡한 쿼리 작성 시 임시 변수 기능을 합니다.
 ```sql
 DECLARE @고객 TABLE
 (
@@ -236,9 +293,10 @@ SELECT * FROM @고객
 12346	이승투	010-1111-2222
 12347	일승원	010-1111-3333
 */
-
-
 ```
+---
+## 데이터 무결성
+잘못된 데이터 입력을 예방합니다.
 
 ---
 ## 특징
