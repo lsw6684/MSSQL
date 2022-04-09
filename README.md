@@ -8,6 +8,7 @@
 - [명령어](#명령어)
 - [테이블 변수](#테이블-변수)
 - [데이터 무결성](#데이터-무결성)
+- [DB 설계](#db-설계)
 - [특징](#특징)
 ---
 ## 습관
@@ -297,7 +298,62 @@ SELECT * FROM @고객
 ---
 ## 데이터 무결성
 잘못된 데이터 입력을 예방합니다.
+음
+---
+## DB 설계
 
+- master
+    ```sql
+    CREATE DATABASE db_mis03;
+    ```
+- db_mis03
+    ```sql
+    CREATE DATABASE db_mis03;
+	GO
+
+	USE db_mis03;
+	CREATE TABLE t_company
+	(
+		f_comp_code		CHAR(1)	PRIMARY KEY
+		, f_comp_name	NVARCHAR(20)
+	)
+	GO
+
+	CREATE TABLE t_department
+	(
+		f_dept_code		CHAR(3)	PRIMARY KEY
+		,f_dept_name	NVARCHAR(20)
+		,f_comp_code	CHAR(1)	REFERENCES t_company(f_comp_code)
+		,f_start_date	DATE
+	)
+	GO
+
+	CREATE TABLE t_employee
+	(
+		f_emp_code			CHAR(5) PRIMARY KEY
+		,f_emp_name			NVARCHAR(10)
+		,f_emp_eng_name		VARCHAR(50)
+		,f_emp_gender		CHAR(1)
+		,f_emp_hire_date	DATE
+		,f_emp_retire_date	DATE
+		,f_dept_code		CHAR(3)	REFERENCES t_department(f_dept_code)
+		,f_emp_hp			VARCHAR(20)
+		,f_emp_email		VARCHAR(100)
+		,f_emp_salary		INT
+	)
+	GO
+
+	CREATE TABLE t_vacation
+	(
+		f_vac_num			INT IDENTITY(1,1) PRIMARY KEY
+		,f_emp_code			CHAR(5) REFERENCES t_employee(f_emp_code)
+		,f_vac_begin_date	DATE
+		,f_vac_end_date		DATE
+		,f_vac_reason		NVARCHAR(256) DEFAULT '개인 사유'
+		,f_vac_duration		AS (DATEDIFF(day, f_vac_begin_date, f_vac_end_date) + 1)
+		, CHECK(f_vac_end_date >= f_vac_begin_date)
+	)
+    ```
 ---
 ## 특징
 - NULL과 공백('') <br />
