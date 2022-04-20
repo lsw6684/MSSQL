@@ -208,6 +208,26 @@ SQL Server Management Studio
         -- 끝에 PERSISTED 추가 하면, 화면에 출력될 때 계산하는 것이 아닌, 계산된 상태로 저장하여 출력 속도가, 보다 빠릅니다.
     )
     ```
+- DATEADD : 시간 더하여 출력
+    ```sql
+    SELECT DATEADD(SECOND, -10, '2022-04-20')      -- 10초 전
+    SELECT DATEADD(SECOND, 10, '2022-04-20')       -- 10초 후
+
+    SELECT DATEADD(MINUTE, -10, '2022-04-20')      -- 10분 전
+    SELECT DATEADD(MINUTE, 10, '2022-04-20')       -- 10분 후
+
+    SELECT DATEADD(HOUR, -10, '2022-04-20')      -- 10시간 전
+    SELECT DATEADD(HOUR, 10, '2022-04-20')       -- 10시간 후
+    
+    SELECT DATEADD(DAY, -10, '2022-04-20')      -- 10일 전
+    SELECT DATEADD(DAY, 10, '2022-04-20')       -- 10일 후
+
+    SELECT DATEADD(MONTH, -1, '2022-04-20')    -- 1개월 전
+    SELECT DATEADD(MONTH, 1, '2022-04-20')     -- 1개월 후
+    
+    SELECT DATEADD(YEAR, -1, '2022-04-20')      -- 1년 전
+    SELECT DATEADD(YEAR, 1, '2022-04-20')       -- 1년 후
+    ```
 - IDENTITY
     ```sql
     CREATE TABLE    휴가 (
