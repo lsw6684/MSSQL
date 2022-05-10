@@ -228,6 +228,10 @@ SQL Server Management Studio
     SELECT DATEADD(YEAR, -1, '2022-04-20')      -- 1년 전
     SELECT DATEADD(YEAR, 1, '2022-04-20')       -- 1년 후
     ```
+- DATEPART : 지정한 날짜의 특정 부분을 출력합니다.
+    ```sql
+    SELECT DATEPART(WEEK, '2007-04-21')         -- 몇 주차인지 출력.(※1월 1일 시작이 아닐 수 있음)   
+    ```
 - IDENTITY
     ```sql
     CREATE TABLE    휴가 (
@@ -376,5 +380,14 @@ SELECT * FROM @고객
     ```
 ---
 ## 특징
-- NULL과 공백('') <br />
+### NULL과 공백('')
 컬럼에 공백 값을 INSERT 할 경우 **오라클에선** NULL로 저장 되지만, **MSSQL에서는 NULL과 공백이 구분**됩니다. 공백 값은 ISNULL 조건에 걸리지 않으며, default 값이 설정된 컬럼에 INSERT를 할 때, **공백('')이 아닌 NULL을 사용하거나 생략**해야 합니다.
+
+### WITH(NOLOCK)
+MSSQL은 격리수준(Isolation Level)이 **Read Committed** 이기 때문에, SELECT 시 공유장금(S Lock)이 걸립니다. 즉, **DML(INSERT, UPDATE, DELETE)**작업 중인 것은 조회할 수 없기 때문에 **DB 성능 저하**와 **Deadlock**이 발생할 수 있습니다. 하지만, `FROM 테이블 명 + WITH(NOLOCK)`을 적용 하면, 조회할 ROW 혹은 TABLE이 작업(잠금 상태) 중이라 해도, **바로 조회**할 수 있으며, 이를 통해 **조회 성능 향상**과 **Deadlock 방지**를 할 수 있습니다. </br> </br>
+
+*Committed 되지 않은 데이터를 읽기 때문에, **순간적으로 잘못된 데이터를 읽을 수 있습니다.** 고로, **정확성이 필요한 상황에선** 신중하게 사용해야 합니다.
+
+
+
+
