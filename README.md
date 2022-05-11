@@ -8,6 +8,7 @@
 - [명령어](#명령어)
 - [테이블 변수](#테이블-변수)
 - [데이터 무결성](#데이터-무결성)
+- [Optimizer](#optimizer)
 - [DB 설계](#db-설계)
 - [특징](#특징)
 ---
@@ -323,6 +324,12 @@ SELECT * FROM @고객
 ## 데이터 무결성
 잘못된 데이터 입력을 예방합니다.
 음
+
+---
+
+## Optimizer
+<p align="center"><img src="images/opt.png" width="40%"></p>
+
 ---
 ## DB 설계
 
